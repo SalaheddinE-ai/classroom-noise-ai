@@ -1,0 +1,6 @@
+# Install only what you need (see README.md, section 2)
+pyannote.audio>=3.1     # pyannote_slots overlap mode (needs a Hugging Face token + accepted model terms)
+piper-tts>=1.2          # offline TTS (needs a downloaded .onnx voice)
+kokoro>=0.9.4           # offline Kokoro-82M TTS (needs espeak-ng installed on the OS)
+# SepFormer source separation needs no extra package (SpeechBrain/torchaudio are in requirements.txt):
+#   set CNAI_SEPARATION_ENABLED=true  (the model is downloaded on first use)
