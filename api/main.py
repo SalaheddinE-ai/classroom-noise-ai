@@ -24,7 +24,7 @@ async def lifespan(_: FastAPI):
     service.shutdown()
 
 
-app = FastAPI(title="classroom-noise-ai", version="1.1.0", lifespan=lifespan)
+app = FastAPI(title="classroom-noise-ai", version="2.1.1", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 app.include_router(students.router)

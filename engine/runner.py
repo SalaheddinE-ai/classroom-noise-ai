@@ -225,10 +225,26 @@ class MonitorService:
             "unknown_speaker_handling": self.settings.unknown_speaker_handling,
             "viz_history_seconds": self.settings.viz_history_seconds,
             "latency": snap.get("latency", {}),
+            "compute": self._compute_info(),
             "dropped_windows": self._stream.dropped_windows if self._stream else 0,
             "processing_errors": self.processing_errors,
             "server_time": time.time(),
         }
+
+    def _compute_info(self) -> Dict[str, Any]:
+        """Where the models run (shown in /status): proves whether CUDA is really in use."""
+        info: Dict[str, Any] = {"embedding_device": getattr(self.recognizer, "device", None),
+                                "cuda_available": False, "gpu": None, "torch": None}
+        try:
+            import torch
+
+            info["torch"] = getattr(torch, "__version__", None)
+            if torch.cuda.is_available():
+                info["cuda_available"] = True
+                info["gpu"] = torch.cuda.get_device_name(0)
+        except Exception:
+            pass
+        return info
 
     def update_settings(self, **values: Any) -> Dict[str, Any]:
         """Apply runtime-tunable settings (no restart needed)."""
