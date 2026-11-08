@@ -301,6 +301,9 @@ def build_timeline_figure(events: Sequence[Dict[str, Any]], window: Optional[Tup
     return fig
 
 
+MAX_WAVEFORM_ROWS = 6
+
+
 def build_speaker_waveforms_figure(events: Sequence[Dict[str, Any]], window: Optional[Tuple[datetime, datetime]] = None):
     """One waveform row per speaker that has an audio-derived series; rows are labelled by signal type."""
     from plotly.subplots import make_subplots
@@ -309,8 +312,12 @@ def build_speaker_waveforms_figure(events: Sequence[Dict[str, Any]], window: Opt
     tracks = speaker_waveform_tracks(events)
     if not tracks:
         return None
+    # Identified students first, then the loudest unknown voices; never more than MAX_WAVEFORM_ROWS rows
+    # (a crowded event would otherwise break the subplot grid and flood the page).
+    tracks = sorted(tracks, key=lambda t: t["label"].startswith("Unknown"))[:MAX_WAVEFORM_ROWS]
     titles = [f"{t['label']} - {SIGNAL_LABELS.get(t['signal_type'], t['signal_type'])}" for t in tracks]
-    fig = make_subplots(rows=len(tracks), cols=1, shared_xaxes=True, subplot_titles=titles, vertical_spacing=0.12)
+    spacing = min(0.12, 0.8 / max(len(tracks) - 1, 1))  # plotly requires spacing <= 1 / (rows - 1)
+    fig = make_subplots(rows=len(tracks), cols=1, shared_xaxes=True, subplot_titles=titles, vertical_spacing=spacing)
     for i, track in enumerate(tracks, start=1):
         for sign in (1, -1):
             fig.add_trace(go.Scatter(x=track["x"], y=[sign * v for v in track["y"]], mode="lines",

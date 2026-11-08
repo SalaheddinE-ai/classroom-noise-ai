@@ -152,7 +152,8 @@ class Settings(BaseSettings):
     # ---- Servers ---------------------------------------------------------
     api_host: str = "127.0.0.1"
     api_port: int = 8000
-    ui_port: int = 8501
+    ui_port: int = 8501                  # legacy Streamlit dashboard
+    web_port: int = 3000                 # Next.js dashboard
 
     # ---- Derived helpers -------------------------------------------------
     @property

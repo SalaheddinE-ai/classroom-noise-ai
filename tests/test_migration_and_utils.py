@@ -259,3 +259,19 @@ def test_monitor_start_stop_restart_and_concurrent_start(monkeypatch):
     svc.start()                                               # restart works
     assert svc.running and len(started) == 2
     svc.stop()
+
+
+def test_waveform_figure_with_many_speakers_does_not_crash():
+    pytest.importorskip("plotly")
+    from datetime import datetime, timedelta
+    from ui import components as ui
+    t0 = datetime(2026, 10, 19, 9, 0, 0).astimezone()
+    speakers = [{
+        "speaker_id": f"S{i}", "is_identified": False, "student_name": "Unknown Speaker", "student_id": None,
+        "start_time": t0.isoformat(), "end_time": (t0 + timedelta(seconds=1)).isoformat(),
+        "signal_type": "separated", "segments": [],
+        "waveform": {"t0": t0.isoformat(), "dt_seconds": 0.05, "peaks": [0.1, 0.2, 0.1]},
+    } for i in range(14)]
+    event = {"event_id": "e", "speakers": speakers}
+    fig = ui.build_speaker_waveforms_figure([event])
+    assert fig is not None and len(fig.data) <= 2 * ui.MAX_WAVEFORM_ROWS

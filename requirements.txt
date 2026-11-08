@@ -17,11 +17,7 @@ pydantic>=2.6
 pydantic-settings>=2.2
 sqlalchemy>=2.0
 
-# Frontend
-streamlit>=1.40
-requests>=2.31
-pandas>=2.0
-plotly>=5.20
+# Frontend: the dashboard is the Next.js app in web/ (Node.js, see README). Streamlit is optional: requirements-legacy-ui.txt
 
 # TTS fallback (needs internet) + HF hub
 edge-tts>=6.1.9
